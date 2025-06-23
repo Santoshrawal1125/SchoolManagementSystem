@@ -143,7 +143,8 @@ To make testing easier, this project includes:
 
 4. **Use and test API endpoints**
 
-    - You can now test endpoints like `/schools/`, `/departments/`, `/staff/` based on your logged-in user role.
+    - You can now test endpoints like `/schools/`, `/departments/`, `/staff/` based on your logged-in user role.  
+    - **Important:** Make sure to include the trailing slash (`/`) at the end of each endpoint URL in Postman (e.g., `/schools/`, `/register/`). Omitting the trailing slash may cause a "404 Not Found" or other errors because Django’s default URL patterns expect it.
 
 ---
 
@@ -154,4 +155,22 @@ To make testing easier, this project includes:
 - Feel free to explore and modify requests in the collection as needed.
 
 ---
+
+## API Documentation (Swagger UI)
+
+This project also includes **Swagger UI** for interactive API documentation and testing.
+
+- After running the development server (`python manage.py runserver`), open your browser and visit:
+http://127.0.0.1:8000/swagger/
+
+- The Swagger UI lists all available endpoints with detailed info on methods, request parameters, and response schemas.
+
+- You can directly try out **GET** requests and some **POST** requests in Swagger.
+
+- Note: Some POST endpoints might require additional setup or data in the request body because we are not using ModelViewSets for all views.
+
+---
+
+Feel free to reach out if you need help with running or testing the project!
+
 
