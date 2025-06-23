@@ -4,8 +4,8 @@
 
 ## Project Overview
 
-This project is a **backend API** for managing schools, departments, classrooms, staff, and students with **role-based authentication and authorization**.  
-It is built using **Django** and **Django REST Framework (DRF)** with JWT token authentication.
+This project is a backend API for managing schools, departments, classrooms, staff, and students with role-based authentication and authorization.  
+It is built using Django and Django REST Framework (DRF) with JWT token authentication.
 
 ### Key Features
 
@@ -17,158 +17,141 @@ It is built using **Django** and **Django REST Framework (DRF)** with JWT token 
 
 ---
 
-### Application Flow
+## Application Flow
+
 This describes how different users interact with the system and what APIs they typically use:
 
-  SuperAdmin
+### SuperAdmin
 
-        Logs in and obtains an access token.
+- Logs in and obtains an access token.  
+- Creates Schools and assigns SchoolAdmins to each school.  
+- Has full control over schools (CRUD operations).  
 
-        Creates Schools and assigns SchoolAdmins to each school.
+### SchoolAdmin
 
-        Has full control over schools (CRUD operations).
+- Logs in using their credentials.  
+- Manages their assigned school only.  
+- Creates Departments and Classrooms within their school.  
+- Registers Staff and Students linked to their Departments and Classrooms.  
+- Creates DepartmentHeads for each Department.  
 
-  SchoolAdmin
+### DepartmentHead
 
-        Logs in using their credentials.
+- Logs in and views only the Staff members within their own Department.  
+- Cannot modify data but can view staff details relevant to their department.  
 
-        Manages their assigned school only.
+### Staff
 
-        Creates Departments and Classrooms within their school.
+- Logs in and views their own profile.  
 
-        Registers Staff and Students linked to their Departments and Classrooms.
+### Student
 
-        Creates DepartmentHeads for each Department.
-
-  DepartmentHead
-
-        Logs in and views only the Staff members within their own Department.
-
-        Cannot modify data but can view staff details relevant to their department.
-
-  Staff
-
-        Logs in and views their own profile.
-
-  Student
-
-        Logs in and views their own profile.
+- Logs in and views their own profile.  
 
 ---
 
 ## Installation & Setup
 
-### 1. Clone the repository
+1. **Clone the repository**
 
-```bash
-git clone https://github.com/Santoshrawal1125/SchoolManagementSystem.git
-cd SchoolManagementSystem
-```
-### 2. Create and activate a virtual environment
-```bash
-python -m venv venv
-```
-On Linux/macOS:
-```bash
-source venv/bin/activate
-```
+    ```bash
+    git clone https://github.com/Santoshrawal1125/SchoolManagementSystem.git
+    cd SchoolManagementSystem
+    ```
 
-On Windows:
-```bash
-venv\Scripts\activate
-```
+2. **Create and activate a virtual environment**
 
-### 3. Install dependencies
+    ```bash
+    python -m venv venv
+    ```
 
-```bash
-pip install -r requirements.txt
-```
+    - On Linux/macOS:
 
-### 4. Run migrations
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-### 5. Seed Initial Data(As creating evry user schools and diff posts take time it creates evrything for you too test)
+      ```bash
+      source venv/bin/activate
+      ```
 
-```bash
-python manage.py seed_data
-```
+    - On Windows:
 
-This will create:
+      ```bash
+      venv\Scripts\activate
+      ```
 
-    1 SuperAdmin (username: superadmin, password: admin123)
+3. **Install dependencies**
 
-    2 SchoolAdmins (schooladmin1 and schooladmin2, both with password admin123)
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-    2 Departments per school
+4. **Run migrations**
 
-    2 Classrooms per school
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
 
-    2 Staff members per department
+5. **Seed Initial Data**  
+   (Creating every user, school, and department manually takes time — this command creates everything for you to test)
 
-    2 Students per classroom
+    ```bash
+    python manage.py seed_data
+    ```
 
-This seeded data allows easy testing of all roles and features without manual setup.
+    This will create:
 
-### 6. Run the development server
+    - 1 SuperAdmin (`username: superadmin`, `password: admin123`)  
+    - 2 SchoolAdmins (`schooladmin1` and `schooladmin2`, both with password `admin123`)  
+    - 2 Departments per school  
+    - 2 Classrooms per school  
+    - 2 Staff members per department  
+    - 2 Students per classroom  
 
-```bash
-python manage.py runserver
-```
+    This seeded data allows easy testing of all roles and features without manual setup.
 
-### 7. Testing with Postman
+6. **Run the development server**
+
+    ```bash
+    python manage.py runserver
+    ```
+
+---
+
+## Testing with Postman
 
 To make testing easier, this project includes:
 
-    SchoolManagement.postman_collection.json — Pre-configured API requests
+- `SchoolManagement.postman_collection.json` — Pre-configured API requests  
+- `SchoolManagement.postman_environment.json` — Environment variables with URLs and token placeholders  
 
-    SchoolManagement.postman_environment.json — Environment variables with URLs and token placeholders
+### How to use Postman files
 
-### 8. Import the Postman collection
-      
-      Click on File > Import
+1. **Import the Postman collection**
 
-      Select the SchoolManagement.postman_collection.json file
+    - Open Postman and click **File > Import**  
+    - Select the `SchoolManagement.postman_collection.json` file  
+    - This loads all pre-made API requests into Postman.
 
-      This loads all pre-made API requests into Postman.
+2. **Import the Postman environment**
 
-      Again, click on File > Import
+    - Again, click **File > Import**  
+    - Select the `SchoolManagement.postman_environment.json` file  
+    - This creates an environment named **SchoolManagement Env** with variables like `base_url` and token placeholders.
 
-      Select the SchoolManagement.postman_environment.json file
+3. **Select the environment**
 
-      This creates an environment named SchoolManagement Env with variables like base_url and token placeholders.
+    - At the top-right in Postman, choose **SchoolManagement Env** from the environment dropdown.
 
-### 9. Select the environment
+4. **Use and test API endpoints**
 
-      At the top-right in Postman, choose SchoolManagement Env from the environment dropdown.
+    - You can now test endpoints like `/schools/`, `/departments/`, `/staff/` based on your logged-in user role.
 
-### 10. Use and Test all the api endpoints there.
+---
 
-      You can now test endpoints like /schools/, /departments/, /staff/ based on your logged-in user role.
+### Tips
 
+- Tokens are automatically refreshed using the **Refresh Token** request.  
+- Use the **Register User** request to add new users if your role permits.  
+- Feel free to explore and modify requests in the collection as needed.
 
-Tips
-
-    Tokens are automatically refreshed using the Refresh Token request.
-
-    Use the Register User request to add new users if your role permits.
-
-    Explore and modify requests in the collection as needed.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+---
 
