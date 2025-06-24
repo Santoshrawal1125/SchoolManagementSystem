@@ -158,6 +158,8 @@ To make testing easier, this project includes:
 
 ## API Documentation (Swagger UI)
 
+For the easiness of testing i have made short urls which are accesed from who is logged in like schooladmin if logged in can acess its schools data so they might not be clear soe please have a  good look.
+
 This project also includes **Swagger UI** for interactive API documentation and testing.
 
 - After running the development server (`python manage.py runserver`), open your browser and visit:
@@ -170,6 +172,28 @@ http://127.0.0.1:8000/swagger/
 - Note: Some POST endpoints might require additional setup or data in the request body because we are not using ModelViewSets for all views.
 
 ---
+
+
+## 🔹 Note on API Endpoint Design
+
+To simplify testing and enhance developer experience, this project uses **shortened, role-aware endpoints** that automatically return data scoped to the currently authenticated user.
+
+### Examples:
+
+- `/api/departments/` → returns departments **belonging to the logged-in SchoolAdmin's school**
+- `/api/staff/` → returns staff based on whether the user is a **SchoolAdmin** (school-level) or **DepartmentHead** (department-level)
+- `/api/students/` → returns students associated with the **user's school**
+
+This design reduces the need to pass user-specific filters or query parameters in most cases and allows **easy testing using tools like Postman**.
+
+✅ These APIs can be extended into full **RESTful nested routes** (e.g., `/api/schools/{id}/departments/`) for production environments.  
+However, this simplified structure was intentionally chosen to:
+
+- Reduce complexity during testing or evaluation
+- Support fast and context-aware data access
+- Clearly demonstrate role-based authorization behavior
+
+If you prefer REST-style nested routing, the project is modular and can be easily extended to support it.
 
 Feel free to reach out if you need help with running or testing the project!
 
