@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import StaffListView, StaffDetailView, DepartmentStaffListView, StudentListView, StudentDetailView, \
-    ClassroomStudentListView
+from .views import StaffListView, StaffDetailView,  StudentListView, StudentDetailView, \
+    ClassroomStudentListView,DepartmentStaffListView
 
 urlpatterns = [
     # staff endpoints

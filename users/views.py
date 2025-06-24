@@ -1,25 +1,70 @@
-from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .serializers import StaffSerializer, StudentSerializer
-from .models import Student, Staff
 from rest_framework.permissions import IsAuthenticated
-from accounts.permissions import CanCreateDepartmentAndClasses, IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin
+from .models import Staff, Student
+from .serializers import StaffSerializer, StudentSerializer
+from accounts.permissions import IsSchoolAdminOrDeptHead
 
 
+# 🧑‍🏫 Staff List View
 class StaffListView(ListAPIView):
     serializer_class = StaffSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSchoolAdminOrDeptHead]
 
     def get_queryset(self):
         user = self.request.user
-
         if user.role == 'schooladmin':
             return Staff.objects.filter(department__school=user.school)
-
         elif user.role == 'departmenthead':
             return Staff.objects.filter(department=user.department)
-
         return Staff.objects.none()
+
+
+# 🧑‍🏫 Staff Detail View
+class StaffDetailView(RetrieveAPIView):
+    serializer_class = StaffSerializer
+    permission_classes = [IsAuthenticated, IsSchoolAdminOrDeptHead]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'schooladmin':
+            return Staff.objects.filter(department__school=user.school)
+        elif user.role == 'departmenthead':
+            return Staff.objects.filter(department=user.department)
+        return Staff.objects.none()
+
+    def get_object(self):
+        obj = super().get_object()
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+# 🎓 Student List View
+class StudentListView(ListAPIView):
+    serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticated, IsSchoolAdminOrDeptHead]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'schooladmin':
+            return Student.objects.filter(classroom__school=user.school)
+        return Student.objects.none()
+
+
+# 🎓 Student Detail View
+class StudentDetailView(RetrieveAPIView):
+    serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticated, IsSchoolAdminOrDeptHead]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'schooladmin':
+            return Student.objects.filter(classroom__school=user.school)
+        return Student.objects.none()
+
+    def get_object(self):
+        obj = super().get_object()
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 
 class DepartmentStaffListView(ListAPIView):
@@ -41,35 +86,6 @@ class DepartmentStaffListView(ListAPIView):
         return Staff.objects.none()
 
 
-class StaffDetailView(RetrieveAPIView):
-    serializer_class = StaffSerializer
-    permission_classes = [IsAuthenticated, IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin]
-
-    def get_queryset(self):
-        user = self.request.user
-
-        if user.role == 'schooladmin':
-            return Staff.objects.filter(department__school=user.school)
-
-        elif user.role == 'depthead':
-            return Staff.objects.filter(department=user.department)
-
-        return Staff.objects.none()
-
-
-class StudentListView(ListAPIView):
-    serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-
-        if user.role == 'schooladmin':
-            return Student.objects.filter(classroom__school=user.school)
-
-        return Student.objects.none()
-
-
 class ClassroomStudentListView(ListAPIView):
     serializer_class = StudentSerializer
     permission_classes = [IsAuthenticated]
@@ -82,18 +98,5 @@ class ClassroomStudentListView(ListAPIView):
 
         if user.role == 'schooladmin':
             return queryset.filter(classroom__school=user.school)
-
-        return Student.objects.none()
-
-
-class StudentDetailView(RetrieveAPIView):
-    serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-
-        if user.role == 'schooladmin':
-            return Student.objects.filter(classroom__school=user.school)
 
         return Student.objects.none()

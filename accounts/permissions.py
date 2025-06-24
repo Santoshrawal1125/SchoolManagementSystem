@@ -47,12 +47,9 @@ class CanAccessOwnSchoolOnly(BasePermission):
         return hasattr(obj, 'school') and obj.school == request.user.school
 
 
-class IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin(BasePermission):
-    """
-    Allows access if:
-    - User is a SchoolAdmin (full access)
-    - OR User is a DepartmentHead and accessing only their own department's objects (read-only)
-    """
+class IsSchoolAdminOrDeptHead(BasePermission):
+
+    # Allows access to school admins (full) and department heads (read-only).
 
     def has_permission(self, request, view):
         user = request.user
@@ -60,20 +57,25 @@ class IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin(BasePermission):
             return False
 
         if user.role == 'schooladmin':
-            return True  # Full access for SchoolAdmin
+            return True
 
         if user.role == 'departmenthead' and request.method in SAFE_METHODS:
-            return True  # Read-only access for DepartmentHead (checked more in has_object_permission)
+            return True
 
-        return False  # Deny in all other cases
+        return False
 
     def has_object_permission(self, request, view, obj):
         user = request.user
 
         if user.role == 'schooladmin':
-            return True  # SchoolAdmin can access any object
+            return True
 
         if user.role == 'departmenthead':
-            return getattr(obj, 'department', None) == user.department  # Must match department
+            # If it's a Staff object
+            if hasattr(obj, 'department'):
+                return obj.department == user.department
+
+            # If it's a Student object (not allowed for depthead)
+            return False
 
         return False
