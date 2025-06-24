@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .serializers import StaffSerializer, StudentSerializer
 from .models import Student, Staff
 from rest_framework.permissions import IsAuthenticated
-from accounts.permissions import CanCreateDepartmentAndClasses, IsDepartmentHeadAndOwnDepartment
+from accounts.permissions import CanCreateDepartmentAndClasses, IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin
 
 
 class StaffListView(ListAPIView):
@@ -43,7 +43,7 @@ class DepartmentStaffListView(ListAPIView):
 
 class StaffDetailView(RetrieveAPIView):
     serializer_class = StaffSerializer
-    permission_classes = [IsAuthenticated, IsDepartmentHeadAndOwnDepartment]
+    permission_classes = [IsAuthenticated, IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin]
 
     def get_queryset(self):
         user = self.request.user

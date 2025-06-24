@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -47,12 +47,33 @@ class CanAccessOwnSchoolOnly(BasePermission):
         return hasattr(obj, 'school') and obj.school == request.user.school
 
 
-class IsDepartmentHeadAndOwnDepartment(BasePermission):
+class IsDepartmentHeadAndOwnDepartmentOrIsSchoolAdmin(BasePermission):
+    """
+    Allows access if:
+    - User is a SchoolAdmin (full access)
+    - OR User is a DepartmentHead and accessing only their own department's objects (read-only)
+    """
 
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'departmenthead' and request.method in ['GET',
-                                                                                                              'HEAD',
-                                                                                                              'OPTIONS']
+        user = request.user
+        if not user.is_authenticated:
+            return False
+
+        if user.role == 'schooladmin':
+            return True  # Full access for SchoolAdmin
+
+        if user.role == 'departmenthead' and request.method in SAFE_METHODS:
+            return True  # Read-only access for DepartmentHead (checked more in has_object_permission)
+
+        return False  # Deny in all other cases
 
     def has_object_permission(self, request, view, obj):
-        return obj.department == request.user.department
+        user = request.user
+
+        if user.role == 'schooladmin':
+            return True  # SchoolAdmin can access any object
+
+        if user.role == 'departmenthead':
+            return getattr(obj, 'department', None) == user.department  # Must match department
+
+        return False

@@ -124,7 +124,7 @@ To make testing easier, this project includes:
 - `SchoolManagement.postman_environment.json` — Environment variables with URLs and token placeholders  
 
 ### How to use Postman files
-
+   The json file to import is inside the project.
 1. **Import the Postman collection**
 
     - Open Postman and click **File > Import**  
@@ -180,7 +180,7 @@ To simplify testing and enhance developer experience, this project uses **shorte
 
 ### Examples:
 
-- `/api/departments/` → returns departments **belonging to the logged-in SchoolAdmin's school**
+- `/api/departments/` → returns departments **belonging to the logged-in SchoolAdmin's school (Make sure you are logged in with schooladmin)**
 - `/api/staff/` → returns staff based on whether the user is a **SchoolAdmin** (school-level) or **DepartmentHead** (department-level)
 - `/api/students/` → returns students associated with the **user's school**
 
