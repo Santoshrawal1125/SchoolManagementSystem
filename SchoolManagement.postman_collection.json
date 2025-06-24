@@ -286,7 +286,7 @@
       "url": {
         "raw": "{{base_url}}/api/staff/",
         "host": ["{{base_url}}"],
-        "path": ["api","department","1","staff"]
+        "path": ["api","staff"]
       }
     }
   },
@@ -306,7 +306,7 @@
       "url": {
         "raw": "{{base_url}}/api/staff/",
         "host": ["{{base_url}}"],
-        "path": ["api","department","2","staff"]
+        "path": ["api","staff"]
       }
     }
   },
